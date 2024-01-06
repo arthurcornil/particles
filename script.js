@@ -34,18 +34,42 @@ class Particle {
         if (this.y_pos >= canvas.height - particleSize || this.y_pos <= particleSize) {
             this.y_velocity = -this.y_velocity
         }
-        particles.forEach((particle) => {
+        /*particles.forEach((particle) => {
             if (particle === this) {
                 return ;
             }
-            if (particle.x_pos >= this.x_pos - particleSize && particle.x_pos <= this.x_pos + particleSize
-                && particle.y_pos >= this.y_pos - particleSize && particle.y_pos <= this.y_pos + particleSize)
+            const x_distance = this.x_pos - particle.x_pos;
+            const y_distance = this.y_pos - particle.y_pos;
+            const distance = Math.sqrt((x_distance * x_distance) + (y_distance * y_distance))
+            if (distance <= particleSize)
             {
                 console.log('collision');
                 this.x_velocity = -this.x_velocity;
                 particle.x_velocity = -particle.x_velocity;
                 this.y_velocity = -this.y_velocity;
                 particle.y_velocity = -particle.y_velocity;
+            }
+        });*/
+    }
+
+    #drawBounds()
+    {
+        const observableRadius = 100;
+        particles.forEach((particle) => {
+            if (particle === this)
+                return ;
+            const x_distance = this.x_pos - particle.x_pos;
+            const y_distance = this.y_pos - particle.y_pos;
+            const distance = Math.sqrt((x_distance * x_distance) + (y_distance * y_distance))
+            if (distance <= observableRadius) {
+                const opacity = (observableRadius - distance) / observableRadius;
+                c.strokeStyle = `rgb(255, 255, 255, ${opacity})`;
+                c.lineWidth = 5;
+
+                c.beginPath();
+                c.moveTo(this.x_pos, this.y_pos);
+                c.lineTo(particle.x_pos, particle.y_pos);
+                c.stroke();
             }
         });
     }
@@ -55,12 +79,13 @@ class Particle {
         this.x_pos += this.x_velocity;
         this.y_pos += this.y_velocity;
         this.#checkCollision();
+        this.#drawBounds();
     }
 }
 
 let particles = [];
 
-for (let i = 0; i < 100;  i++) {
+for (let i = 0; i < 150; i++) {
     particles.push(new Particle());
 }
 
